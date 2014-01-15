@@ -1,0 +1,433 @@
+$color-blue: #008398;
+$color-orange: #FF5300;
+$color-light-gray: #EFEFEF;
+$color-medium-gray: #CCC;
+$color-dark-gray: #D0D0D0;
+$color-black: #333;
+$font-stack: "Open Sans", "Helvetica", "Arial", sans-serif;
+
+.cf {
+    *zoom: 1;
+
+    &:before,
+	&:after {
+	    content: " "; /* 1 */
+	    display: table; /* 2 */
+	}
+
+	&:after {
+	    clear: both;
+	}
+}
+
+body {
+	font: 100%/1.5 $font-stack;
+	color: $color-black;
+	padding-top: 32px;
+}
+
+a {
+	text-decoration: none;
+
+	&:hover {
+		cursor: pointer;
+	}
+}
+
+small {
+	text-transform: lowercase;
+	font-style: italic;
+	color: $color-light-gray;
+}
+
+.container {
+	width: 960px;
+	margin: 0 auto;
+	clear: both;
+	position: relative;
+}
+
+#top-bar {
+	background: $color-blue;
+	height: 32px;
+	position: fixed;
+	z-index: 100;
+	width: 100%;
+	top:0; left: 0;
+	font-weight: 300;
+}
+
+#top-left {
+	padding-top: 0.25em;
+	float: left;
+}
+
+#user-name {
+	color: white;
+	font-weight: 300;
+	margin-right: 0.25em;
+
+	&:hover {
+		text-decoration: underline;
+	}
+}
+
+#user-status {
+	color: $color-light-gray;
+	position: relative;
+
+	&:hover {
+		text-decoration: underline;
+	}
+}
+
+#status-menu {
+	position: absolute;
+	top: 24px;
+	left: -4px;
+	z-index: 100;
+	background: $color-black;
+	display: none;
+
+	&:before {
+		content: '';
+		position: absolute;
+		border-left: .5em solid transparent;
+		border-right: .5em solid transparent;
+		border-bottom: .5em solid $color-black;
+		top: -.5em;
+		right: 25px;
+	}
+	&.active {
+		display: block;
+	}
+
+	ul {
+		list-style: none;
+		padding: 0.5em 1em;
+		margin: 0;
+	}
+
+	li:hover {
+		color: $color-blue;
+	}
+}
+
+
+#top-right {
+	padding-top: 0.25em;
+	float: right;
+}
+#voicemails {
+	color: white;
+	margin-right: 1em;
+}
+#clock {
+	color: white;
+}
+
+
+.row {
+	height: 80px;
+	position: relative;
+}
+
+.tab {
+	background: $color-light-gray;
+	font-size: 2em;
+	padding: 0.5em 1em;
+	display: block;
+	float: left;
+	border-right: 1px solid white;
+	font-weight: 800;
+	color: $color-medium-gray;
+
+	&.active {
+		color: $color-blue;
+	}
+}
+
+.actions {
+	float: right;
+	position: relative;
+	top: 48px;
+
+	font-weight: 300;
+	color: $color-medium-gray;
+}
+.action {
+	margin-left: 1em;
+}
+
+
+
+
+#info-table {
+	clear: both;
+	margin-bottom: 80px;
+	cursor: default;
+}
+
+.contact-row {
+	border-top: 1px solid white;
+	background: $color-light-gray;
+	transition: background 0.3s;
+
+	&.active {
+		background: $color-blue;
+
+		.contact-info {
+			color: white;
+		}
+		.user-pic-container {
+			background: $color-black;
+		}
+	}
+}
+
+.contact-info {
+	padding: 1em;
+	height: 2em;
+
+	p {
+		float: left;
+		margin: 0;
+		margin-left: 1em;
+		line-height: 1em;
+	}
+
+	.status {
+		color: $color-medium-gray;
+		font-style: italic;
+	}
+
+	.contact-actions {
+		float: right;
+		position: relative;
+		top: 4px;
+
+		.fa {
+			margin-left: 1em;
+		}
+	}
+}
+
+.call-contact {
+	color: $color-orange;
+}
+
+.user-pic-container {
+	border-radius: 9999px;
+	height: 32px;
+	width: 32px;
+	font-size: 2em;
+	color: white;
+	background: $color-blue;
+	text-align: center;
+	overflow: hidden;
+	float: left;
+}
+
+.contact-history {
+	background: $color-dark-gray;
+}
+
+.caller-id {
+	margin-right: 2em;
+}
+
+
+.contact-history {
+	height: 0;
+	overflow: hidden;
+
+	&.open {
+		height: auto;
+	}
+}
+.contact-history-entry {
+	padding: 0.5em 1em;
+
+	@extend .cf;
+
+	&:hover {
+		background: $color-blue;
+	}
+	
+	p {
+		float: left;
+		margin: 0;
+		margin-left: 1em;
+
+		&::after {
+			clear:both;
+			content:'';
+			position:relative;
+		}
+	}
+	
+}
+
+
+
+.call-history-entry {
+	background: $color-light-gray;
+	padding: 1em;
+	border-top: 1px solid white;
+	box-sizing: border-box;
+	position: relative;
+
+	@extend .cf;
+
+	p {
+		float: left;
+		position: relative;
+		margin: 0;
+	}
+
+	span {
+		font-style: italic;
+		color: $color-dark-gray;
+	}
+
+	.recipient {
+		top: .25em;
+		margin-left: .5em;
+		margin-right: 5em;
+	}
+
+	.call-info {
+		line-height: 1em;
+	}
+
+	.redial {
+		position: absolute;
+		right: 1em;
+		color: $color-orange;
+		top: 1.25em;
+	}
+}
+
+
+
+#call-status {
+	position: fixed;
+	bottom: 0;
+	width: 896px;
+	height: 64px;
+	padding: 0.5em 2em;
+	border-top: 1px solid white;
+	color: white;
+	background: $color-black;
+
+	@extend .cf;
+
+	p {
+		float: left;
+		line-height: 1em;
+	}
+
+	#three-way {
+		position: absolute;
+		right: 16em;
+		font-size: 1em;
+		top: 1em;
+		display: none;
+	}
+
+	#volume-actions {
+		position: absolute;
+		right: 6em;
+		font-size: 1.5em;
+		top: .2em;
+		display: none;
+
+		.fa {
+			margin-left: 0.5em;
+		}
+	}
+
+	#end-call {
+		position: absolute;
+		right: 1em;
+		top: 1em;
+		display: none;
+	}
+
+	#redial {
+		position: absolute;
+		right: 1em;
+		top: 1em;
+	}
+
+	&.no-calls {
+		#redial { display: none; }
+		.call-time { display: none; }
+	}
+
+	&.active {
+		background: $color-orange;
+
+		#redial { display: none; }
+		#three-way,
+		#volume-actions,
+		#end-call { display: block; }
+	}
+}
+
+
+#create-contact {
+	position: fixed;
+	top: -168px;
+	width: 960px;
+	left: 50%;
+	background: #333;
+	margin-left: -480px;
+	padding: 1em;
+	box-sizing: border-box;
+	text-align: center;
+	height: 200px;
+
+	label {
+		color: white;
+		display: block;
+	}
+
+	input {
+		display: block;
+		width: 480px;
+		margin: 0 auto;
+		text-align: center;
+		background: transparent;
+		border: none;
+		color: white;
+		font-style: italic;
+		font-weight: 300;
+		border-bottom: 1px solid white;
+		margin-bottom: 1em;
+
+		&:focus {
+			outline: none;
+		}
+	}
+
+	button {
+		border: none;
+		background: $color-orange;
+		color: white;
+		font-weight: 300;
+		text-transform: uppercase;
+		padding: .5em 1em;
+
+		&:focus {
+			outline: none;
+		}
+	}
+
+	.fa {
+		color: white;
+		position: absolute;
+		top: 1em;
+		right: 1em;
+	}
+}

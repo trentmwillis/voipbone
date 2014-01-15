@@ -1,0 +1,307 @@
+.cf, .contact-history-entry, .call-history-entry, #call-status {
+  *zoom: 1; }
+  .cf:before, .contact-history-entry:before, .call-history-entry:before, #call-status:before, .cf:after, .contact-history-entry:after, .call-history-entry:after, #call-status:after {
+    content: " ";
+    /* 1 */
+    display: table;
+    /* 2 */ }
+  .cf:after, .contact-history-entry:after, .call-history-entry:after, #call-status:after {
+    clear: both; }
+
+body {
+  font: 100%/1.5 "Open Sans", "Helvetica", "Arial", sans-serif;
+  color: #333333;
+  padding-top: 32px; }
+
+a {
+  text-decoration: none; }
+  a:hover {
+    cursor: pointer; }
+
+small {
+  text-transform: lowercase;
+  font-style: italic;
+  color: #efefef; }
+
+.container {
+  width: 960px;
+  margin: 0 auto;
+  clear: both;
+  position: relative; }
+
+#top-bar {
+  background: #008398;
+  height: 32px;
+  position: fixed;
+  z-index: 100;
+  width: 100%;
+  top: 0;
+  left: 0;
+  font-weight: 300; }
+
+#top-left {
+  padding-top: 0.25em;
+  float: left; }
+
+#user-name {
+  color: white;
+  font-weight: 300;
+  margin-right: 0.25em; }
+  #user-name:hover {
+    text-decoration: underline; }
+
+#user-status {
+  color: #efefef;
+  position: relative; }
+  #user-status:hover {
+    text-decoration: underline; }
+
+#status-menu {
+  position: absolute;
+  top: 24px;
+  left: -4px;
+  z-index: 100;
+  background: #333333;
+  display: none; }
+  #status-menu:before {
+    content: '';
+    position: absolute;
+    border-left: .5em solid transparent;
+    border-right: .5em solid transparent;
+    border-bottom: 0.5em solid #333333;
+    top: -.5em;
+    right: 25px; }
+  #status-menu.active {
+    display: block; }
+  #status-menu ul {
+    list-style: none;
+    padding: 0.5em 1em;
+    margin: 0; }
+  #status-menu li:hover {
+    color: #008398; }
+
+#top-right {
+  padding-top: 0.25em;
+  float: right; }
+
+#voicemails {
+  color: white;
+  margin-right: 1em; }
+
+#clock {
+  color: white; }
+
+.row {
+  height: 80px;
+  position: relative; }
+
+.tab {
+  background: #efefef;
+  font-size: 2em;
+  padding: 0.5em 1em;
+  display: block;
+  float: left;
+  border-right: 1px solid white;
+  font-weight: 800;
+  color: #cccccc; }
+  .tab.active {
+    color: #008398; }
+
+.actions {
+  float: right;
+  position: relative;
+  top: 48px;
+  font-weight: 300;
+  color: #cccccc; }
+
+.action {
+  margin-left: 1em; }
+
+#info-table {
+  clear: both;
+  margin-bottom: 80px;
+  cursor: default; }
+
+.contact-row {
+  border-top: 1px solid white;
+  background: #efefef;
+  transition: background 0.3s; }
+  .contact-row.active {
+    background: #008398; }
+    .contact-row.active .contact-info {
+      color: white; }
+    .contact-row.active .user-pic-container {
+      background: #333333; }
+
+.contact-info {
+  padding: 1em;
+  height: 2em; }
+  .contact-info p {
+    float: left;
+    margin: 0;
+    margin-left: 1em;
+    line-height: 1em; }
+  .contact-info .status {
+    color: #cccccc;
+    font-style: italic; }
+  .contact-info .contact-actions {
+    float: right;
+    position: relative;
+    top: 4px; }
+    .contact-info .contact-actions .fa {
+      margin-left: 1em; }
+
+.call-contact {
+  color: #ff5300; }
+
+.user-pic-container {
+  border-radius: 9999px;
+  height: 32px;
+  width: 32px;
+  font-size: 2em;
+  color: white;
+  background: #008398;
+  text-align: center;
+  overflow: hidden;
+  float: left; }
+
+.contact-history {
+  background: #d0d0d0; }
+
+.caller-id {
+  margin-right: 2em; }
+
+.contact-history {
+  height: 0;
+  overflow: hidden; }
+  .contact-history.open {
+    height: auto; }
+
+.contact-history-entry {
+  padding: 0.5em 1em; }
+  .contact-history-entry:hover {
+    background: #008398; }
+  .contact-history-entry p {
+    float: left;
+    margin: 0;
+    margin-left: 1em; }
+    .contact-history-entry p::after {
+      clear: both;
+      content: '';
+      position: relative; }
+
+.call-history-entry {
+  background: #efefef;
+  padding: 1em;
+  border-top: 1px solid white;
+  box-sizing: border-box;
+  position: relative; }
+  .call-history-entry p {
+    float: left;
+    position: relative;
+    margin: 0; }
+  .call-history-entry span {
+    font-style: italic;
+    color: #d0d0d0; }
+  .call-history-entry .recipient {
+    top: .25em;
+    margin-left: .5em;
+    margin-right: 5em; }
+  .call-history-entry .call-info {
+    line-height: 1em; }
+  .call-history-entry .redial {
+    position: absolute;
+    right: 1em;
+    color: #ff5300;
+    top: 1.25em; }
+
+#call-status {
+  position: fixed;
+  bottom: 0;
+  width: 896px;
+  height: 64px;
+  padding: 0.5em 2em;
+  border-top: 1px solid white;
+  color: white;
+  background: #333333; }
+  #call-status p {
+    float: left;
+    line-height: 1em; }
+  #call-status #three-way {
+    position: absolute;
+    right: 16em;
+    font-size: 1em;
+    top: 1em;
+    display: none; }
+  #call-status #volume-actions {
+    position: absolute;
+    right: 6em;
+    font-size: 1.5em;
+    top: .2em;
+    display: none; }
+    #call-status #volume-actions .fa {
+      margin-left: 0.5em; }
+  #call-status #end-call {
+    position: absolute;
+    right: 1em;
+    top: 1em;
+    display: none; }
+  #call-status #redial {
+    position: absolute;
+    right: 1em;
+    top: 1em; }
+  #call-status.no-calls #redial {
+    display: none; }
+  #call-status.no-calls .call-time {
+    display: none; }
+  #call-status.active {
+    background: #ff5300; }
+    #call-status.active #redial {
+      display: none; }
+    #call-status.active #three-way,
+    #call-status.active #volume-actions,
+    #call-status.active #end-call {
+      display: block; }
+
+#create-contact {
+  position: fixed;
+  top: -168px;
+  width: 960px;
+  left: 50%;
+  background: #333;
+  margin-left: -480px;
+  padding: 1em;
+  box-sizing: border-box;
+  text-align: center;
+  height: 200px; }
+  #create-contact label {
+    color: white;
+    display: block; }
+  #create-contact input {
+    display: block;
+    width: 480px;
+    margin: 0 auto;
+    text-align: center;
+    background: transparent;
+    border: none;
+    color: white;
+    font-style: italic;
+    font-weight: 300;
+    border-bottom: 1px solid white;
+    margin-bottom: 1em; }
+    #create-contact input:focus {
+      outline: none; }
+  #create-contact button {
+    border: none;
+    background: #ff5300;
+    color: white;
+    font-weight: 300;
+    text-transform: uppercase;
+    padding: .5em 1em; }
+    #create-contact button:focus {
+      outline: none; }
+  #create-contact .fa {
+    color: white;
+    position: absolute;
+    top: 1em;
+    right: 1em; }

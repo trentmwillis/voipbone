@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta author="Trent M. Willis">
+	
+	<title>Willis Voip</title>
+
+	<!-- FontAwesome for icons -->
+	<link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+	<!-- Google Webfonts for Open Sans font -->
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,400italic,300,300italic,800' rel='stylesheet' type='text/css'>
+	<!-- Normalize.css to reset/unify everything -->
+	<link href="normalize.css" rel="stylesheet">
+	<!-- Styles for the application -->
+	<link href="styles.css" rel="stylesheet">
+</head>
+
+<body>
+	<header id="top-bar">
+		<div class="container">
+
+			<!-- User Name and Status information/buttons -->
+			<div id="top-left">
+				<a id="user-name" href="#">Trent Willis</a>
+				<small><a id="user-status" href="#"><span>available</span> <i class="fa fa-caret-down">
+					<div id="status-menu">
+						<ul>
+							<li>Available</li>
+							<li>Unavailable</li>
+						</ul>
+					</div>
+				</i></a></small>
+			</div>
+
+			<!-- Voicemail and Clock information/buttons -->
+			<div id="top-right">
+				<a id="voicemails"><i class="fa fa-comment"></i> <span>2</span> Voicemails</a>
+				<a id="clock">3:13 PM</a>
+			</div>
+		</div>
+	</header>
+
+	<div class="container">
+
+		<div class="row">
+			<!-- Different page tabs -->
+			<a class="tab active" data-page="contacts"><i class="fa fa-users"></i> Contacts</a>
+			<a class="tab" data-page="calls"><i class="fa fa-clock-o"></i> Call History</a>
+
+			<!-- This is where the page-specific actions will be generated -->
+			<div class="actions"></div>
+		</div>
+
+
+
+		<!-- This is where the page info will be generated -->
+		<div id="info-table"></div>
+
+		<!-- This is where the info for the current/most-recent call resides -->
+		<div id="call-status" class="no-calls">
+			<p class="caller-id">
+				<small>No calls have been made</small>
+			</p>
+
+			<p class="call-time">
+				<small>Call time</small><br>
+				<span id="current-call-time">0:00:00</span>
+			</p>
+
+			<p id="three-way">
+				+
+				<i class="fa fa-user"></i>
+				Add caller
+			</p>
+
+			<p id="volume-actions">
+				<i class="fa fa-volume-off"></i>
+				<i class="fa fa-volume-down"></i>
+				<i class="fa fa-volume-up"></i>
+			</p>
+
+			<p id="end-call">
+				<i class="fa fa-times-circle"></i> Hang Up
+			</p>
+
+			<p id="redial">
+				<i class="fa fa-repeat"></i> Redial
+			</p>
+		</div>
+	</div>
+
+	<!-- Form to add a new contact -->
+	<form id="create-contact">
+		<i class="fa fa-times-circle"></i>
+		<label for="name">Name</label>
+		<input type="text" data-prop="name">
+		<label for="number">Number</label>
+		<input type="text" data-prop="number">
+		<button>Add contact</button>
+	</form>
+
+	<!-- Template for a contact on the 'Contacts' page -->
+	<script type="text/template" id="contactTemplate">
+		<div class="contact-info">
+			<div class="user-pic-container">
+				<i class="fa fa-user"></i>
+			</div>
+
+			<p><%= name %><br>
+			<span class="status"><%= status %></span></p>
+
+			<div class="contact-actions">
+				<a class="view-contact-history"><i class="fa fa-clock-o"></i> View History</a>
+				<a class="call-contact"><i class="fa fa-phone"></i> Call</a>
+			</div>
+		</div>
+
+		<div class="contact-history">
+			<div class="contact-history-entry">
+				<p>Incoming</p>
+				<p>Thursday, January 9th, 2014</p>
+				<p>6:15 PM</p>
+				<p>Duration: 0:53:20</p>
+			</div>
+			<div class="contact-history-entry">
+				<p>Incoming</p>
+				<p>Thursday, January 9th, 2014</p>
+				<p>6:15 PM</p>
+				<p>Duration: 0:53:20</p>
+			</div>
+		</div>
+	</script>
+
+	<!-- Template for an entry in a contact's call history list -->
+	<script type="text/template" id="contactCallTemplate">
+		<div class="contact-history-entry">
+			<p><%= type %></p>
+			<p><%= date %></p>
+			<p><%= time %></p>
+			<p>Duration: <%= duration %></p>
+		</div>
+	</script>
+
+	<!-- Template for an entry on the 'Call History' page -->
+	<script type="text/template" id="callTemplate">
+		<div class="call-history-entry">
+			<div class="user-pic-container">
+				<i class="fa fa-user"></i>
+			</div>
+			<p class="recipient"><%= recipient %></p>
+			<p class="call-info">
+				<%= type %> <span>on</span> <%= date %> <span>at</span> <%= time %><br>
+				<span class="duration">Duration: <%= duration %></span>
+			</p>
+			<div class="redial">
+				<i class="fa fa-repeat"></i> Redial
+			</div>
+		</div>
+	</script>
+
+	<!-- CDN jQuery, Underscore, and Backbone (needs to be in that order for dependencies) -->
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.0/backbone-min.js"></script>
+	<!-- Actual application script -->
+	<script src="app.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,23 @@
+{
+	"contacts": [
+		{
+			"name":"Andres Hernandez",
+			"status":"available",
+			"number":"123-456-7890",
+			"callHistory":[1,2,3]
+		},
+		{
+			"name":"Andres Hernandez",
+			"status":"available",
+			"number":"123-456-7890",
+			"callHistory":[1,2,3]
+		},
+		{
+			"name":"Andres Hernandez",
+			"status":"available",
+			"number":"123-456-7890",
+			"callHistory":[1,2,3]
+		}
+
+	]
+}
