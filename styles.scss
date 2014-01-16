@@ -6,13 +6,16 @@ $color-dark-gray: #D0D0D0;
 $color-black: #333;
 $font-stack: "Open Sans", "Helvetica", "Arial", sans-serif;
 
+
+// Clearfix micro-hack
+// Read up here: http://nicolasgallagher.com/micro-clearfix-hack/
 .cf {
-    *zoom: 1;
+	*zoom: 1;
 
     &:before,
 	&:after {
-	    content: " "; /* 1 */
-	    display: table; /* 2 */
+	    content: " ";
+	    display: table;
 	}
 
 	&:after {
@@ -233,6 +236,10 @@ small {
 }
 
 .caller-id {
+	width: 200px;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
 	margin-right: 2em;
 }
 
@@ -294,6 +301,10 @@ small {
 		top: .25em;
 		margin-left: .5em;
 		margin-right: 5em;
+		width: 150px;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow: hidden;
 	}
 
 	.call-info {
@@ -341,6 +352,12 @@ small {
 		font-size: 1.5em;
 		top: .2em;
 		display: none;
+
+		&.muted {
+			color: $color-black;
+
+			.fa-volume-off { color: white; }
+		}
 
 		.fa {
 			margin-left: 0.5em;

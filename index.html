@@ -3,8 +3,9 @@
 <head>
 	<meta charset="utf-8">
 	<meta author="Trent M. Willis">
+	<meta description="A VoIP interface">
 	
-	<title>Willis Voip</title>
+	<title>VoIP</title>
 
 	<!-- FontAwesome for icons -->
 	<link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
@@ -28,6 +29,7 @@
 						<ul>
 							<li>Available</li>
 							<li>Unavailable</li>
+							<li>Invisible</li>
 						</ul>
 					</div>
 				</i></a></small>
@@ -116,20 +118,7 @@
 			</div>
 		</div>
 
-		<div class="contact-history">
-			<div class="contact-history-entry">
-				<p>Incoming</p>
-				<p>Thursday, January 9th, 2014</p>
-				<p>6:15 PM</p>
-				<p>Duration: 0:53:20</p>
-			</div>
-			<div class="contact-history-entry">
-				<p>Incoming</p>
-				<p>Thursday, January 9th, 2014</p>
-				<p>6:15 PM</p>
-				<p>Duration: 0:53:20</p>
-			</div>
-		</div>
+		<div class="contact-history"></div>
 	</script>
 
 	<!-- Template for an entry in a contact's call history list -->
@@ -148,7 +137,7 @@
 			<div class="user-pic-container">
 				<i class="fa fa-user"></i>
 			</div>
-			<p class="recipient"><%= recipient %></p>
+			<p class="recipient"><%= callerNames.join(", ") %></p>
 			<p class="call-info">
 				<%= type %> <span>on</span> <%= date %> <span>at</span> <%= time %><br>
 				<span class="duration">Duration: <%= duration %></span>

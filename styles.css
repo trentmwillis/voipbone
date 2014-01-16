@@ -2,9 +2,7 @@
   *zoom: 1; }
   .cf:before, .contact-history-entry:before, .call-history-entry:before, #call-status:before, .cf:after, .contact-history-entry:after, .call-history-entry:after, #call-status:after {
     content: " ";
-    /* 1 */
-    display: table;
-    /* 2 */ }
+    display: table; }
   .cf:after, .contact-history-entry:after, .call-history-entry:after, #call-status:after {
     clear: both; }
 
@@ -169,6 +167,10 @@ small {
   background: #d0d0d0; }
 
 .caller-id {
+  width: 200px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
   margin-right: 2em; }
 
 .contact-history {
@@ -206,7 +208,11 @@ small {
   .call-history-entry .recipient {
     top: .25em;
     margin-left: .5em;
-    margin-right: 5em; }
+    margin-right: 5em;
+    width: 150px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden; }
   .call-history-entry .call-info {
     line-height: 1em; }
   .call-history-entry .redial {
@@ -239,6 +245,10 @@ small {
     font-size: 1.5em;
     top: .2em;
     display: none; }
+    #call-status #volume-actions.muted {
+      color: #333333; }
+      #call-status #volume-actions.muted .fa-volume-off {
+        color: white; }
     #call-status #volume-actions .fa {
       margin-left: 0.5em; }
   #call-status #end-call {
