@@ -1,6 +1,5 @@
 /*
- * FINISHED: Call a contact, call voicemail, delete a contact, change status of the user, change status of the user, add a contact, change user name, start a three-way phone-call, mute the phone, View call history with a contact, redial a number 
- * TODO: Change the clock
+ * TODO: Stop timer after call ends, 
  */
 
 $(function() {
@@ -222,6 +221,8 @@ $(function() {
 			currentCall = new Call({
 				callers: contactID
 			});
+
+			var timer = new TimerView();
 		},
 		activate: function() {
 			$('.contact-row.active').removeClass('active');
@@ -517,6 +518,59 @@ $(function() {
 			}
 
 			this.marker = (this.currentTime.getHours() >= 12 && !this.markerSwap) ? "PM" : "AM";
+		},
+		resetClock: function() {
+			this.hoursOffset = 0;
+			this.minutesOffset = 0;
+			this.markerSwap = 0;
+			this.hours = (this.currentTime.getHours() > 12) ? this.currentTime.getHours() - 12 : this.currentTime.getHours()
+			this.minutes = (this.currentTime.getMinutes() < 10) ? "0" + this.currentTime.getMinutes() : this.currentTime.getMinutes();
+			this.marker = this.marker = (this.currentTime.getHours() >= 12) ? "PM" : "AM";
+		}
+	});
+
+	var Timer = Backbone.Model.extend({
+		initialize: function() {
+			this.start();
+		},
+		stop: function() {
+			clearInterval(this.interval);
+		},
+		start: function() {
+			var that = this;
+			this.initTime = $.now();
+			this.interval = setInterval(function() { that.tick(); }, 1000);
+		},
+		// Updates the timer time, should be called each second
+		tick: function() {
+			this.currentTime = $.now();
+			this.time = this.currentTime - this.initTime;
+		},
+		// Return a string of the current timer time
+		getTime: function() {
+			var hours = Math.floor(this.time / (60 * 60 * 1000)),
+				minutes = Math.floor((this.time - (hours * 3600000)) / (60 * 1000)),
+				seconds = Math.floor((this.time - (hours * 3600000) - (minutes * 60000)) / 1000),
+				timeString = hours + ":" + minutes + ":" + seconds;
+
+			return timeString;
+		},
+		// Returns a string of when the call started
+		getStartTime: function() {
+			return new Date(this.initTime).toString();
+		}
+	});
+
+	var TimerView = Backbone.View.extend({
+		el: $('#current-call-time'),
+		initialize: function() {
+			var that = this;
+			this.model = new Timer();
+			this.render();
+			this.interval = setInterval(function() { that.render(); }, 1000);
+		},
+		render: function() {
+			this.$el.html(this.model.getTime());
 		}
 	});
 
@@ -539,6 +593,8 @@ $(function() {
 			var hours = prompt("Please enter the hour:"),
 				minutes = prompt("Please enter the minutes:"),
 				marker = prompt("Please enter 'AM' or 'PM':");
+
+			this.model.resetClock();
 
 			if (hours !== this.model.hours) {
 				this.model.hoursOffset = hours - this.model.hours;
