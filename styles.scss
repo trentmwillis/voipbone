@@ -6,6 +6,74 @@ $color-dark-gray: #D0D0D0;
 $color-black: #333;
 $font-stack: "Open Sans", "Helvetica", "Arial", sans-serif;
 
+#complete-screen {
+	position: fixed;
+	background: white;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	top: 0;
+}
+
+.hide {
+	display: none;
+}
+
+#survey {
+	width: 100%;
+	height: 100%;
+	background: rgba(0,0,0,.8);
+	position: fixed;
+	z-index: 200;
+	top: 0;
+	color: white;
+	overflow: auto;
+
+	a {
+		color: $color-blue;
+		&:hover { color: white; }
+	}
+
+	label {
+		font-weight: 800;
+		color: $color-blue;
+	}
+
+	input[type='text'] {
+		border: 0;
+		background: transparent;
+		color: white;
+		width: 400px;
+		font-weight: 300;
+	}
+
+	textarea {
+		display: block;
+		width: 100%;
+		box-sizing: border-box;
+		border: none;
+		outline: none;
+		font-size: 1em;
+		padding: .5em 1em;
+		line-height: 1.5em;
+		margin-bottom: 1.5em;
+	}
+
+	button {
+		margin-bottom: 2em;
+		border: none;
+		background: $color-blue;
+		padding: .5em 1em;
+		color: white;
+	}
+}
+
+.ui-slider {
+	width: 300px;
+	margin-bottom: 1.5em;
+	margin-top: 0.5em;
+}
+
 #evaluation {
 	background: $color-light-gray;
 	width: 150px;

@@ -15,9 +15,44 @@
 	<link href="normalize.css" rel="stylesheet">
 	<!-- Styles for the application -->
 	<link href="styles.css" rel="stylesheet">
+
+	<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
 </head>
 
 <body>
+	<div id="complete-screen" class="hide">
+		<div class="container">
+
+		</div>
+	</div>
+
+	<div id="survey" class="hide">
+		<div class="container">
+			<h1>Survey</h1>
+			<p>Please complete the following brief survey. Once you click submit, a page will be displayed with text including your times for completing each task, total completion time, and questionnaire results. Please email these results to <a href="mailto:trentmwillis@gmail.com">trentmwillis@gmail.com</a>.</p>
+			<div>
+				<label for="eou">Ease of Use:</label>
+				<input type="text" id="eou" readonly>
+				<div id="eou-slider"></div>
+			</div>
+			<div>
+				<label for="satisfaction">Satisfaction:</label>
+				<input type="text" id="satisfaction" readonly>
+				<div id="satisfaction-slider"></div>
+			</div>
+			<div>
+				<label for="design">Aesthetic Design:</label>
+				<input type="text" id="design" readonly>
+				<div id="design-slider"></div>
+			</div>
+			<div>
+				<label for="comments">Comments &amp; Suggestions</label>
+				<textarea name="comments" id="comments"></textarea>
+			</div>
+			<button id="submit-survey">Submit Survey</button>
+		</div>
+	</div>
+
 	<div id="evaluation">
 		<ol id="evaluation-list">
 			<li>Task 1</li>
@@ -161,6 +196,7 @@
 
 	<!-- CDN jQuery, Underscore, and Backbone (needs to be in that order for dependencies) -->
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.0/backbone-min.js"></script>
 	<!-- Actual application script -->
