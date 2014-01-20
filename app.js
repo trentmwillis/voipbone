@@ -1,6 +1,7 @@
 /*
- * TODO: Stop timer after call ends, 
- */
+Need to start new timer when calling voicemail while in another call
+Record time to complete each action in task lsit
+*/
 
 $(function() {
 
@@ -81,42 +82,42 @@ $(function() {
 		callHistory = [
 				{
 					"callers": [1,2],
-					"date": "Friday, January 10th, 2014",
+					"date": "1/10/2014",
 					"time": "6:15 PM",
 					"type": "Incoming",
 					"duration": "0:53:20"
 				},
 				{
 					"callers": [3,4,5],
-					"date":"Thursday, January 9th, 2014",
+					"date":"1/9/2014",
 					"time":"6:15 PM",
 					"type":"Outgoing",
 					"duration":"0:53:20"
 				},
 				{
 					"callers": [5,6],
-					"date":"Monday, January 6th, 2014",
+					"date":"1/6/2014",
 					"time":"6:15 PM",
 					"type":"Incoming",
 					"duration":"0:53:20"
 				},
 				{
 					"callers": [10],
-					"date":"Sunday, January 5th, 2014",
+					"date":"1/5/2014",
 					"time":"6:15 PM",
 					"type":"Outgoing",
 					"duration":"0:53:20"
 				},
 				{
 					"callers": [12],
-					"date":"Friday, January 3rd, 2014",
+					"date":"1/3/2014",
 					"time":"6:15 PM",
 					"type":"Incoming",
 					"duration":"0:53:20"
 				},
 				{
 					"callers": [1, 4],
-					"date":"Wednesday, January 1st, 2014",
+					"date":"1/1/2014",
 					"time":"6:15 PM",
 					"type":"Outgoing",
 					"duration":"0:53:20"
@@ -125,12 +126,14 @@ $(function() {
 			inCall = false,
 			currentCall = null,
 			selection = null,
-			app;
+			contactIDMaker = 0,
+			app, evaluator;
 
 	var Contact = Backbone.Model.extend({
 		defaults: {
 			status: "available",
-			callHistory: []
+			callHistory: [],
+			contactID: contactIDMaker++
 		}
 	});
 
@@ -159,6 +162,9 @@ $(function() {
 			"click .call-contact" : "callContact",
 			"click" : "activate"
 		},
+		initialize: function() {
+			this.on("call","callContact");
+		},
 		render: function() {
 			var tmpl = _.template(this.template);
 			this.$el.html(tmpl(this.model.toJSON()));
@@ -186,24 +192,26 @@ $(function() {
 				$history.animate({'height':height}, 500, function() {
 					$(this).addClass('open');
 				});
+
+				// Evaluation trigger
+				evaluator.trigger('viewContactCallHistory');
 			}
 		},
 		getContactHistory: function() {
 			var contactID = this.model.attributes.contactID,
-				history = _.filter(callHistory, function(call) {
-					return call.callers.indexOf(contactID) >= 0;
+				history = _.filter(app.callHistoryPage.collection.models, function(call) {
+					return call.attributes.callers.indexOf(contactID) >= 0;
 				}),
 				$historyContainer = this.$('.contact-history');
 				
-				if (history.length) {
-					$historyContainer.html("");
-				} else {
-					$historyContainer.html("<div class='contact-history-entry'>No call history with " + this.model.attributes.name + "</div>");
-				}
-				
+			if (history.length) {
+				$historyContainer.html("");
+			} else {
+				$historyContainer.html("<div class='contact-history-entry'>No call history with " + this.model.attributes.name + "</div>");
+			}
 
 			for (var i=0; i<history.length; i++) {
-				$historyContainer.append(_.template($('#contactCallTemplate').html())(history[i]));
+				$historyContainer.append(_.template($('#contactCallTemplate').html())(history[i].toJSON()));
 			}
 		},
 		callContact: function() {
@@ -219,10 +227,16 @@ $(function() {
 			$callArea.children('.caller-id').html('<small>On the phone with</small><br>' + this.model.attributes.name);
 			inCall = true;
 			currentCall = new Call({
-				callers: contactID
+				callers: [contactID],
+				date: app.clock.getDate(),
+				time: app.clock.getTime(),
+				type: 'Outgoing'
 			});
 
-			var timer = new TimerView();
+			app.timer.start();
+
+			// Evaluation trigger
+			evaluator.trigger('callContact');
 		},
 		activate: function() {
 			$('.contact-row.active').removeClass('active');
@@ -238,14 +252,21 @@ $(function() {
 		},
 		render: function() {
 			var tmpl = _.template(this.template),
-				callers = this.model.attributes.callers;
+				callers = this.model.attributes.callers,
+				contact;
 			this.model.attributes.callerNames = [];
 			for (var i=0; i<callers.length; i++) {
 				if (app) {
-					this.model.attributes.callerNames.push(_.find(app.contactPage.collection.models, function(contact) {
+					contact = _.find(app.contactPage.collection.models, function(contact) {
 						return contact.attributes.contactID === callers[i];
-					}).attributes.name);
+					});
+					if (contact) {
+						this.model.attributes.callerNames.push(contact.attributes.name);
+					}
 				}
+			}
+			if (this.model.attributes.callerNames.length === 0) {
+				return false;
 			}
 			this.$el.html(tmpl(this.model.toJSON()));
 			return this;
@@ -256,17 +277,24 @@ $(function() {
 					return contact.attributes.contactID === that.model.attributes.callers[0];
 				});
 
-			// Start the call
-			new ContactView({
-				model: caller
+			_.find(app.contactPage.childViews, function(view) {
+				return caller === view.model;
 			}).callContact();
 
 			// Add any additional contacts that were a part of the call
 			if (this.model.attributes.callers.length > 1) {
-
+				for (var i=1; i<this.model.attributes.callers.length; i++) {
+					selection = _.find(app.contactPage.childViews, function(view) {
+						return view.model.attributes.contactID === that.model.attributes.callers[i];
+					});
+					app.addCallerToCall();
+				}
 			}
-			currentCall = this;
+
 			inCall = true;
+
+
+			evaluator.trigger("redial");
 		}
 	});
 
@@ -275,6 +303,7 @@ $(function() {
 
 		initialize: function() {
 			this.collection = new ContactCollection(contacts);
+			this.childViews = [];
 			this.render();
 		},
 
@@ -286,19 +315,13 @@ $(function() {
 			}, this);
 
 			$('.actions').html("<a class='action add'><i class='fa fa-plus'></i> add</a><a class='action delete'><i class='fa fa-minus'></i> delete</a>");
-		
-			$('.action.add').click(function() {
-				$("#create-contact").animate({"top":"32px"}, 500);
-			});
-			$('#create-contact .fa-times-circle').click(function() {
-				$("#create-contact").animate({"top":"-168px"}, 500);
-			});
 		},
 
 		renderContact: function(contact) {
 			var contactView = new ContactView({
 				model: contact
 			});
+			this.childViews.push(contactView);
 			this.$el.append(contactView.render().el);
 		}
 	});
@@ -344,13 +367,17 @@ $(function() {
 			"click .fa-volume-down" : "volumeControl",
 			"click #three-way" : "addCallerToCall",
 			"click #clock" : "setClock",
-			"click #redial" : "redialLastCall"
+			"click #redial" : "redialLastCall",
+			"click .action.add" : "showAddContact",
+			"click #create-contact .fa-times-circle" : "hideAddContact"
 		},
 		initialize: function() {
+			this.contactIDMaker = 12;
 			this.model = new User();
 			this.callHistoryPage = new CallCollectionView();
 			this.contactPage = new ContactCollectionView();
 			this.clock = new ClockView();
+			this.timer = new TimerView();
 
 			this.renderName();
 			this.renderStatus();
@@ -369,6 +396,7 @@ $(function() {
 				this.callHistoryPage.render();
 			}
 
+			selection = null;
 			$('.tab.active').removeClass('active');
 			$this.addClass('active');
 		},
@@ -376,6 +404,9 @@ $(function() {
 			var $call = $("#call-status");
 			$call.removeClass("active");
 			$call.children('.caller-id').children('small').html("Last call with");
+			this.timer.stop();
+			currentCall.attributes.duration = this.timer.getTime();
+			this.callHistoryPage.collection.add(currentCall, {at: 0});
 			inCall = false;
 		},
 		editUserProfile: function() {
@@ -399,6 +430,9 @@ $(function() {
 			if (e.target.tagName === "LI") {
 				this.model.attributes.status = $(e.target).html();
 				this.renderStatus();
+
+				// Evaluation trigger
+				evaluator.trigger('changeStatus');
 			}
 		},
 		renderStatus: function() {
@@ -415,6 +449,9 @@ $(function() {
 			this.model.attributes.voicemails = 0;
 			this.renderVoicemails();
 			inCall = true;
+
+			// Evaluation trigger
+			evaluator.trigger('callVoicemail');
 		},
 		renderVoicemails: function() {
 			$('#voicemails').children('span').html(this.model.attributes.voicemails);
@@ -423,28 +460,51 @@ $(function() {
 			if (selection && confirm("Warning: you are about to delete " + selection.model.attributes.name + " from you contact list. Proceed?")) {
 				selection.$el.animate({"height":"0px"}, 500, function() {
 					selection.model.destroy();
+					app.contactPage.collection.remove(selection);
 					selection.remove();
 					selection = null;
+
+					// Evaluation trigger
+					evaluator.trigger('deleteContact');
 				});
 			} else if (!selection) {
 				alert("Please select a contact to delete.");
 			}
 		},
+		showAddContact: function() {
+			$("#create-contact").animate({"top":"32px"}, 500);
+		},
+		hideAddContact: function() {
+			$("#create-contact").animate({"top":"-168px"}, 500);
+		},
 		addContact: function(e) {
 			e.preventDefault();
 
-			var formData = {};
+			var formData = {},
+				completed = true;
+
 			$("#create-contact").children("input").each(function (i, el) {
 				if ($(el).val() !== "") {
 					formData[$(el).data('prop')] = $(el).val();
 				} else {
 					alert("Please enter the contact " + $(el).data('prop'));
+					completed = false;
 					return false;
 				}
 			});
+			if (!completed) {
+				return;
+			}
+
+			formData['contactID'] = ++this.contactIDMaker;
+
 			$("#create-contact").find("input").val("");
 			this.contactPage.collection.add(new Contact(formData));
 			this.contactPage.render();
+			this.hideAddContact();
+
+			// Evaluation trigger
+			evaluator.trigger('createContact');
 		},
 		mute: function() {
 			var $volumeIcons = $("#volume-actions");
@@ -453,15 +513,30 @@ $(function() {
 			} else {
 				$volumeIcons.addClass("muted");
 			}
+
+			// Evaluation trigger
+			evaluator.trigger('mute');
 		},
 		addCallerToCall: function() {
-			var $callArea = $('#call-status');
+			var $callArea;
+
 			if (!selection) {
 				alert("Please select a contact to add to the call");
 				return;
+			} else if (_.find(currentCall.attributes.callers, function(callerID) {
+				return callerID === selection.model.attributes.contactID	
+			})) {
+				alert(selection.model.attributes.name + " is already a part of this call");
+				return;
 			}
 
+			$callArea = $('#call-status');
+
 			$callArea.children('.caller-id').append(", " + selection.model.attributes.name);
+			currentCall.attributes.callers.push(selection.model.attributes.contactID);
+
+			// Evaluation trigger
+			evaluator.trigger('startThreeWay');
 		},
 		volumeControl: function() {
 			var $volumeIcons = $("#volume-actions");
@@ -487,11 +562,85 @@ $(function() {
 		},
 		redialLastCall: function() {
 			var caller = _.find(this.contactPage.collection.models, function(contact) {
-				return contact.attributes.contactID === currentCall.attributes.callers;
-			});
-			new ContactView({
-				model: caller
+				return contact.attributes.contactID === currentCall.attributes.callers[0];
+			}),
+				previousCall = currentCall;
+
+			_.find(this.contactPage.childViews, function(view) {
+				return caller === view.model;
 			}).callContact();
+
+			// Add any additional contacts that were a part of the call
+			if (previousCall.attributes.callers.length > 1) {
+				for (var i=1; i<previousCall.attributes.callers.length; i++) {
+					selection = _.find(this.contactPage.childViews, function(view) {
+						return view.model.attributes.contactID === previousCall.attributes.callers[i];
+					});
+					this.addCallerToCall();
+				}
+			}
+
+			inCall = true;
+
+			// Evaluation trigger
+			evaluator.trigger('redial');
+		}
+	});
+
+	var Timer = Backbone.Model.extend({
+		initialize: function() {
+			this.start();
+		},
+		stop: function() {
+			clearInterval(this.interval);
+		},
+		start: function() {
+			var that = this;
+			this.initTime = $.now();
+			this.tick();
+			this.interval = setInterval(function() { that.tick(); }, 1000);
+		},
+		// Updates the timer time, should be called each second
+		tick: function() {
+			this.currentTime = $.now();
+			this.time = this.currentTime - this.initTime;
+		},
+		// Return a string of the current timer time
+		getTime: function() {
+			var hours = Math.floor(this.time / (60 * 60 * 1000)),
+				minutes = Math.floor((this.time - (hours * 3600000)) / (60 * 1000)),
+				seconds = Math.floor((this.time - (hours * 3600000) - (minutes * 60000)) / 1000),
+				timeString;
+				hours = (hours < 10) ? "0" + hours : hours;
+				minutes = (minutes < 10) ? "0" + minutes : minutes;
+				seconds = (seconds < 10) ? "0" + seconds : seconds;
+				timeString = hours + ":" + minutes + ":" + seconds;
+
+			return timeString;
+		},
+		// Returns a string of when the call started
+		getStartTime: function() {
+			return new Date(this.initTime).toString();
+		}
+	});
+
+	var TimerView = Backbone.View.extend({
+		el: $('#current-call-time'),
+		render: function() {
+			this.$el.html(this.model.getTime());
+		},
+		start: function() {
+			var that = this;
+			this.model = new Timer();
+			this.render();
+			this.interval = setInterval(function() { that.render(); }, 1000);
+		},
+		stop: function() {
+			this.model.stop();
+			clearInterval(this.interval);
+		},
+		getTime: function() {
+			return this.model.getTime();
 		}
 	});
 
@@ -507,17 +656,20 @@ $(function() {
 			this.hours = (this.currentTime.getHours() > 12) ? this.currentTime.getHours() - 12 : this.currentTime.getHours();
 			if (this.hoursOffset) {
 				this.hours = this.hours + this.hoursOffset;
-				this.hours = (this.hours < 12) ? this.hours : this.hours - 12;
+				this.hours = (this.hours > 12) ? this.hours - 12 : this.hours;
 			}
 
-			this.minutes = (this.currentTime.getMinutes() < 10) ? "0" + this.currentTime.getMinutes() : this.currentTime.getMinutes();
-			this.minutes = this.minutes + this.minutesOffset;
+			this.minutes = (this.minutesOffset) ? this.currentTime.getMinutes() + this.minutesOffset : this.currentTime.getMinutes();
 			if (this.minutes > 59) {
 				this.hours++;
 				this.minutes -= 59;
 			}
+			this.minutes = (this.minutes < 10) ? "0" + this.minutes : this.minutes;
 
-			this.marker = (this.currentTime.getHours() >= 12 && !this.markerSwap) ? "PM" : "AM";
+			this.marker = (this.currentTime.getHours() >= 12) ? "PM" : "AM";
+			if (this.markerSwap) {
+				this.marker = (this.marker === "PM") ? "AM" : "PM";
+			}
 		},
 		resetClock: function() {
 			this.hoursOffset = 0;
@@ -526,51 +678,6 @@ $(function() {
 			this.hours = (this.currentTime.getHours() > 12) ? this.currentTime.getHours() - 12 : this.currentTime.getHours()
 			this.minutes = (this.currentTime.getMinutes() < 10) ? "0" + this.currentTime.getMinutes() : this.currentTime.getMinutes();
 			this.marker = this.marker = (this.currentTime.getHours() >= 12) ? "PM" : "AM";
-		}
-	});
-
-	var Timer = Backbone.Model.extend({
-		initialize: function() {
-			this.start();
-		},
-		stop: function() {
-			clearInterval(this.interval);
-		},
-		start: function() {
-			var that = this;
-			this.initTime = $.now();
-			this.interval = setInterval(function() { that.tick(); }, 1000);
-		},
-		// Updates the timer time, should be called each second
-		tick: function() {
-			this.currentTime = $.now();
-			this.time = this.currentTime - this.initTime;
-		},
-		// Return a string of the current timer time
-		getTime: function() {
-			var hours = Math.floor(this.time / (60 * 60 * 1000)),
-				minutes = Math.floor((this.time - (hours * 3600000)) / (60 * 1000)),
-				seconds = Math.floor((this.time - (hours * 3600000) - (minutes * 60000)) / 1000),
-				timeString = hours + ":" + minutes + ":" + seconds;
-
-			return timeString;
-		},
-		// Returns a string of when the call started
-		getStartTime: function() {
-			return new Date(this.initTime).toString();
-		}
-	});
-
-	var TimerView = Backbone.View.extend({
-		el: $('#current-call-time'),
-		initialize: function() {
-			var that = this;
-			this.model = new Timer();
-			this.render();
-			this.interval = setInterval(function() { that.render(); }, 1000);
-		},
-		render: function() {
-			this.$el.html(this.model.getTime());
 		}
 	});
 
@@ -589,10 +696,34 @@ $(function() {
 			this.model.update();
 			this.$el.html(this.model.hours + ":" + this.model.minutes + " " + this.model.marker);
 		},
+		getTime: function() {
+			return this.model.hours + ":" + this.model.minutes + " " + this.model.marker;
+		},
+		getDate: function() {
+			return this.model.currentTime.toLocaleDateString();
+		},
 		setClock: function() {
-			var hours = prompt("Please enter the hour:"),
-				minutes = prompt("Please enter the minutes:"),
-				marker = prompt("Please enter 'AM' or 'PM':");
+			var hours,
+				minutes,
+				marker;
+
+			hours = prompt("Please enter the hour [1, 12]:");
+			if (!hours || hours < 1 || hours > 12) {
+				alert('Please enter a correct hour number between 1 and 12.');
+				return;
+			}
+
+			minutes = prompt("Please enter the minutes [0,59]:");
+			if (!minutes || minutes < 0 || minutes > 59) {
+				alert('Please enter a correct minutes number between 0 and 59.');
+				return;
+			}
+
+			marker = prompt("Please enter 'AM' or 'PM':");
+			if (!marker || (marker !== 'AM' && marker !== 'PM')) {
+				alert('Please enter a correct marker, either "AM" or "PM".');
+				return;
+			}
 
 			this.model.resetClock();
 
@@ -607,8 +738,76 @@ $(function() {
 			if (marker !== this.model.marker) {
 				this.model.markerSwap = true;
 			}
+
+			// Evaluation trigger
+			evaluator.trigger('changeClock');
 		}
 	});
 
+	var Evaluation = Backbone.Model.extend({
+		tasks: [
+			"Call a contact",
+			"Add a contact",
+			"View the call history with a contact",
+			"Change status of user",
+			"Redial a number",
+			"Start a three-way call",
+			"Mute the phone",
+			"Call voicemail",
+			"Delete a contact",
+			"Change the clock"
+		],
+		taskTrigger: [
+			"callContact",
+			"createContact",
+			"viewContactCallHistory",
+			"changeStatus",
+			"redial",
+			"startThreeWay",
+			"mute",
+			"callVoicemail",
+			"deleteContact",
+			"changeClock"
+		]
+	});
+
+	var Evaluator = Backbone.View.extend({
+		el: $('#evaluation-list'),
+		initialize: function() {
+			this.model = new Evaluation();
+			this.timer = new TimerView({el: $('#evaluation-timer')});
+			this.taskNum = 0;
+			this.render();
+		},
+		render: function() {
+			this.timer.start();
+			this.$el.html("<li class='current-task'>" + this.model.tasks[0] + "</li>");
+			this.on(this.model.taskTrigger[0], this.advanceTasks);
+			//this.advanceTasks();
+		},
+		advanceTasks: function() {
+			this.taskNum++;
+			$('.current-task').removeClass('current-task');
+
+			if (this.model.tasks[this.taskNum]) {
+				this.$el.append("<li class='current-task'>" + this.model.tasks[this.taskNum] + "</li>");
+				this.off();
+				this.on(this.model.taskTrigger[this.taskNum], this.advanceTasks);
+			} else {
+				this.finish();
+			}
+		},
+		finish: function() {
+			this.off();
+			this.timer.stop();
+			alert("Evaluation finished, your total time to complete all tasks was: " + this.timer.getTime());
+		}
+	});
+
+	confirm("Welcome to the VoIP interface evaluation. There will be tasks listed in the bar on the left-hand side of the screen, as you complete each task a new one will be added and your time recorded. There are ten tasks total.");
+
 	app = new PageView();
+	evaluator = new Evaluator();
+
+
 });

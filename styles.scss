@@ -6,6 +6,20 @@ $color-dark-gray: #D0D0D0;
 $color-black: #333;
 $font-stack: "Open Sans", "Helvetica", "Arial", sans-serif;
 
+#evaluation {
+	background: $color-light-gray;
+	width: 150px;
+	height: 100%;
+	position: fixed;
+	color: $color-medium-gray;
+
+	.current-task { color: $color-blue; }
+
+}
+
+#evaluation-timer {
+	text-align: center;
+}
 
 // Clearfix micro-hack
 // Read up here: http://nicolasgallagher.com/micro-clearfix-hack/

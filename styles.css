@@ -1,3 +1,15 @@
+#evaluation {
+  background: #efefef;
+  width: 150px;
+  height: 100%;
+  position: fixed;
+  color: #cccccc; }
+  #evaluation .current-task {
+    color: #008398; }
+
+#evaluation-timer {
+  text-align: center; }
+
 .cf, .contact-history-entry, .call-history-entry, #call-status {
   *zoom: 1; }
   .cf:before, .contact-history-entry:before, .call-history-entry:before, #call-status:before, .cf:after, .contact-history-entry:after, .call-history-entry:after, #call-status:after {
