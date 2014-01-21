@@ -12,6 +12,7 @@
 #survey {
   width: 100%;
   height: 100%;
+  background: #333;
   background: rgba(0, 0, 0, 0.8);
   position: fixed;
   z-index: 200;
@@ -318,6 +319,8 @@ small {
         color: white; }
     #call-status #volume-actions .fa {
       margin-left: 0.5em; }
+      #call-status #volume-actions .fa:hover {
+        cursor: pointer; }
   #call-status #end-call {
     position: absolute;
     right: 1em;

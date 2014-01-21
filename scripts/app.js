@@ -835,28 +835,28 @@ $(function() {
 
     var Evaluation = Backbone.Model.extend({
         tasks: [
+            "Add a new contact",
             "Call a contact",
-            "Add a contact",
-            "View the call history with a contact",
-            "Change status of user",
             "Redial a number",
+            "View the call history with a contact",
+            "Call voicemail",
+            "Change the clock",
+            "Delete a contact",
             "Start a three-way call",
             "Mute the phone",
-            "Call voicemail",
-            "Delete a contact",
-            "Change the clock"
+            "Change status of user"
         ],
         taskTrigger: [
-            "callContact",
             "createContact",
-            "viewContactCallHistory",
-            "changeStatus",
+            "callContact",
             "redial",
+            "viewContactCallHistory",
+            "callVoicemail",
+            "changeClock",
+            "deleteContact",
             "startThreeWay",
             "mute",
-            "callVoicemail",
-            "deleteContact",
-            "changeClock"
+            "changeStatus"
         ]
     });
 
